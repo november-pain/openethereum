@@ -347,33 +347,56 @@ impl ValidatorSafeContract {
                 && log.topics[1] == *header.parent_hash()
         };
 
-        //// iterate in reverse because only the _last_ change in a given
-        //// block actually has any effect.
-        //// the contract should only increment the nonce once.
-        let mut decoded_events = receipts
-            .iter()
-            .rev()
-            .filter(|r| r.log_bloom.contains_bloom(&bloom))
-            .flat_map(|r| r.logs.iter())
-            .filter(move |l| check_log(l))
-            .filter_map(|log| {
-                validator_set::events::initiate_change::parse_log(
-                    (log.topics.clone(), log.data.clone()).into(),
-                )
-                .ok()
-            });
-        
-        // only last log is taken into account for block after fix_validator_set_transition
-        if machine.params().fix_validator_set_transition < header.number() {
-            trace!(target: "engine", "Extracting validator set with fix applied!");
-            decoded_events
-                .last()
-                .map(|matched_event| SimpleList::new(matched_event.new_set))
-        } else {
-            trace!(target: "engine", "Extracting validator set without fix applied!");
+        if machine.params().refix_validator_set_transition < header.number() {
+            //// iterate in reverse because only the _last_ change in a given
+            //// block actually has any effect.
+            //// the contract should only increment the nonce once.
+            let mut decoded_events = receipts
+                .iter()
+                .rev()
+                .filter(|r| r.log_bloom.contains_bloom(&bloom))
+                .flat_map(|r| r.logs.iter().rev())
+                .filter(move |l| check_log(l))
+                .filter_map(|log| {
+                    validator_set::events::initiate_change::parse_log(
+                        (log.topics.clone(), log.data.clone()).into(),
+                    )
+                    .ok()
+                });
+
+            // only last log is taken into account for block
             decoded_events
                 .next()
                 .map(|matched_event| SimpleList::new(matched_event.new_set))
+        } else {
+            //// iterate in reverse because only the _last_ change in a given
+            //// block actually has any effect.
+            //// the contract should only increment the nonce once.
+            let mut decoded_events = receipts
+                .iter()
+                .rev()
+                .filter(|r| r.log_bloom.contains_bloom(&bloom))
+                .flat_map(|r| r.logs.iter())
+                .filter(move |l| check_log(l))
+                .filter_map(|log| {
+                    validator_set::events::initiate_change::parse_log(
+                        (log.topics.clone(), log.data.clone()).into(),
+                    )
+                    .ok()
+                });
+
+            // only last log is taken into account for block after fix_validator_set_transition
+            if machine.params().fix_validator_set_transition < header.number() {
+                trace!(target: "engine", "Extracting validator set with fix applied!");
+                decoded_events
+                    .last()
+                    .map(|matched_event| SimpleList::new(matched_event.new_set))
+            } else {
+                trace!(target: "engine", "Extracting validator set without fix applied!");
+                decoded_events
+                    .next()
+                    .map(|matched_event| SimpleList::new(matched_event.new_set))
+            }
         }
     }
 }

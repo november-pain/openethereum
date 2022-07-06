@@ -99,6 +99,8 @@ pub struct CommonParams {
     pub validate_receipts_transition: BlockNumber,
     /// From which block apply validator set transition fix.
     pub fix_validator_set_transition: BlockNumber,
+    /// From which block apply new validator set transition fix.
+    pub refix_validator_set_transition: BlockNumber,
     /// Validate transaction chain id.
     pub validate_chain_id_transition: BlockNumber,
     /// Number of first block where EIP-140 rules begin.
@@ -321,10 +323,6 @@ impl CommonParams {
             return Some("validateReceiptsTransition");
         }
 
-        if self.fix_validator_set_transition != 0 {
-            return Some("fixValidatorSetTransition");
-        }
-
         if self.validate_chain_id_transition != 0 {
             return Some("validateChainIdTransition");
         }
@@ -361,6 +359,7 @@ impl From<ethjson::spec::Params> for CommonParams {
             eip155_transition: p.eip155_transition.map_or(0, Into::into),
             validate_receipts_transition: p.validate_receipts_transition.map_or(0, Into::into),
             fix_validator_set_transition: p.fix_validator_set_transition.map_or_else(BlockNumber::max_value, Into::into),
+            refix_validator_set_transition: p.refix_validator_set_transition.map_or_else(BlockNumber::max_value, Into::into),
             validate_chain_id_transition: p.validate_chain_id_transition.map_or(0, Into::into),
             eip140_transition: p
                 .eip140_transition
