@@ -35,3 +35,10 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - uses: docker/build-push-action@v2
+        with:
+          file: scripts/docker/ubuntu20.04/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}-ubuntu20.04
+          labels: ${{ steps.meta.outputs.labels }}-ubuntu20.04
