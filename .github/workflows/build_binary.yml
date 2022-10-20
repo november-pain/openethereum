@@ -16,10 +16,11 @@ jobs:
         with:
           toolchain: 1.47.0
           target: x86_64-unknown-linux-gnu
+
       - uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --target x86_64-unknown-linux-gnu
+          args: --target x86_64-unknown-linux-gnu --features final
 
       - name: export binary
         uses: actions/upload-artifact@v3
