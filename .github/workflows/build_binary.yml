@@ -20,8 +20,7 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --target x86_64-unknown-linux-gnu --features final
-
+          args: --release --features final --target x86_64-unknown-linux-gnu
       - name: export binary
         uses: actions/upload-artifact@v3
         with:
