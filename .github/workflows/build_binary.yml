@@ -22,6 +22,7 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: build
+          toolchain: 1.47.0
           args: --release --features final --target x86_64-unknown-linux-gnu
 
       - name: Get release
