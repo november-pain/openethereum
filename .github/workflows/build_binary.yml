@@ -32,7 +32,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
 
       - name: Archive 
-        run: zip -j openethereum_x86_64-unknown-linux-gnu.zip target/x86_64-unknown-linux-gnu/release/openethereum
+        run: zip -j openethereum_linux.zip target/x86_64-unknown-linux-gnu/release/openethereum
 
       - name: Upload Release Asset
         id: upload-release-asset 
@@ -42,7 +42,7 @@ jobs:
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }} 
           asset_path: ./openethereum_x86_64-unknown-linux-gnu.zip
-          asset_name: openethereum_x86_64-unknown-linux-gnu.zip
+          asset_name: openethereum_linux_${{ env.GITHUB_REF }}.zip
           asset_content_type: application/zip
  
 
