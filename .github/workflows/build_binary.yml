@@ -41,7 +41,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }} 
-          asset_path: ./openethereum_x86_64-unknown-linux-gnu.zip
+          asset_path: ./openethereum_linux.zip
           asset_name: openethereum_linux_${{ env.GITHUB_REF }}.zip
           asset_content_type: application/zip
  
